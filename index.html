@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowMatch - Temukan Tanaman yang Tepat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>🌱 GrowMatch</h1>
+            <p>Rekomendasi tanaman terbaik berdasarkan lokasi dan suhu Anda</p>
+        </div>
+    </header>
+
+    <main class="main container">
+        <section id="deskripsi">
+            <div class="card">
+                <h2>Selamat Datang di GrowMatch</h2>
+                <p>GrowMatch membantu Anda menemukan tanaman yang cocok untuk lokasi dan suhu Anda dengan langkah-langkah sederhana:</p>
+                <ol>
+                    <li><strong>Masukkan Lokasi:</strong> Input lokasi Anda secara manual atau gunakan tombol "Gunakan Lokasi Saya".</li>
+                    <li><strong>Masukkan Suhu:</strong> Tambahkan suhu rata-rata daerah Anda (jika diketahui).</li>
+                    <li><strong>Dapatkan Rekomendasi:</strong> GrowMatch akan memberikan daftar tanaman terbaik.</li>
+                </ol>
+            </div>
+        </section>
+
+        <section id="form-section">
+            <div class="card">
+                <h2>Masukkan Data Anda</h2>
+                <form id="input-form" class="form-modern">
+                    <div class="input-group">
+                        <label for="lokasi">Lokasi Anda:</label>
+                        <input type="text" id="lokasi" name="lokasi" required placeholder="Contoh: Bandung">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="suhu">Suhu (°C):</label>
+                        <input type="number" id="suhu" name="suhu" required placeholder="Contoh: 25">
+                    </div>
+
+                    <div class="button-container">
+                        <button type="button" id="live-location-btn" class="btn-secondary">📍 Gunakan Lokasi Saya</button>
+                        <button type="submit" class="btn-primary">🌿 Cari Tanaman</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 GrowMatch - Tanam dengan Cinta</p>
+    </footer>
+
+    <script>
+        // Fungsi Reverse Geocoding
+        async function reverseGeocode(latitude, longitude) {
+            const apiKey = "da86d0562cc04eea8d594de02b802353"; // OpenCage API Key
+            const url = `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${apiKey}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data.results[0]?.components?.city || "Lokasi Tidak Diketahui";
+            } catch (error) {
+                console.error("Error saat reverse geocoding:", error);
+                return "Lokasi Tidak Diketahui";
+            }
+        }
+
+        // Fungsi Live Location
+        async function getLiveLocation() {
+            if (!navigator.geolocation) {
+                alert("Browser Anda tidak mendukung Geolocation.");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const { latitude, longitude } = position.coords;
+                const lokasi = await reverseGeocode(latitude, longitude);
+                document.getElementById('lokasi').value = lokasi;
+                document.getElementById('suhu').value = 28; // Default suhu
+            }, (error) => {
+                alert("Gagal mendapatkan lokasi. Pastikan izin lokasi aktif.");
+            });
+        }
+
+        // Fungsi Navigasi ke hasil.html
+        function getRecommendation(event) {
+            event.preventDefault();
+
+            const lokasi = document.getElementById('lokasi').value;
+            const suhu = parseInt(document.getElementById('suhu').value);
+
+            if (!lokasi || isNaN(suhu)) {
+                alert("Masukkan lokasi dan suhu yang valid.");
+                return;
+            }
+
+            const url = `hasil.html?lokasi=${encodeURIComponent(lokasi)}&suhu=${encodeURIComponent(suhu)}`;
+            window.location.href = url;
+        }
+
+        document.getElementById('live-location-btn').addEventListener('click', getLiveLocation);
+        document.getElementById('input-form').addEventListener('submit', getRecommendation);
+    </script>
+</body>
+</html>

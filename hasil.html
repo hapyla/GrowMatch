@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Rekomendasi Tanaman</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>🌿 GrowMatch</h1>
+            <p>Hasil Rekomendasi Tanaman untuk Lokasi Anda</p>
+        </div>
+    </header>
+
+    <main class="main container">
+        <section id="result-section">
+            <div class="card">
+                <h2 id="result-title">Menyesuaikan hasil...</h2>
+                <p id="deskripsi">Di GrowMatch, kami membantu Anda menemukan tanaman yang cocok berdasarkan suhu dan lokasi Anda. Berikut adalah rekomendasi tanaman untuk lokasi dan suhu Anda:</p>
+
+                <div class="result-container">
+                    <div class="result-card">
+                        <h3>🌱 Tanaman</h3>
+                        <ul id="tanaman-list" class="result-list"></ul>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>🍓 Buah</h3>
+                        <ul id="buah-list" class="result-list"></ul>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>🥬 Sayur</h3>
+                        <ul id="sayur-list" class="result-list"></ul>
+                    </div>
+                </div>
+
+                <div id="tips-container" class="tips-section">
+                    <h3>💡 Tips Menanam:</h3>
+                    <p id="tips"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 GrowMatch - Cocokkan Tanaman, Tanam dengan Cinta</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lokasi = urlParams.get('lokasi');
+            const suhu = parseInt(urlParams.get('suhu'));
+
+            const tanamanKurangDari25 = {
+                tanaman: ['Brokoli', 'Kale', 'Selada', 'Bayam', 'Kol'],
+                buah: ['Stroberi', 'Blueberry', 'Raspberry'],
+                sayur: ['Wortel', 'Lobak', 'Bawang Putih', 'Bawang Merah'],
+                tips: "Pilih lokasi yang sejuk, pencahayaan penuh, dan media tanam dengan drainase baik."
+            };
+
+            const tanamanLebihDari25 = {
+                tanaman: ['Tomat', 'Cabai', 'Terong', 'Okra'],
+                buah: ['Semangka', 'Melon', 'Pepaya', 'Mangga', 'Pisang'],
+                sayur: ['Kacang Panjang', 'Kangkung', 'Jagung', 'Mentimun'],
+                tips: "Tanam di lokasi dengan pencahayaan penuh, gunakan pupuk kaya fosfor, dan perhatikan penyiraman teratur."
+            };
+
+            const resultTitle = document.getElementById('result-title');
+            const tanamanList = document.getElementById('tanaman-list');
+            const buahList = document.getElementById('buah-list');
+            const sayurList = document.getElementById('sayur-list');
+            const tipsContainer = document.getElementById('tips');
+
+            if (!lokasi || isNaN(suhu)) {
+                resultTitle.textContent = "Data tidak valid. Silakan kembali ke halaman utama.";
+                return;
+            }
+
+            const rekomendasi = suhu > 25 ? tanamanLebihDari25 : tanamanKurangDari25;
+
+            resultTitle.textContent = `Rekomendasi Tanaman untuk ${lokasi} dengan Suhu ${suhu}°C`;
+            tanamanList.innerHTML = rekomendasi.tanaman.map(item => `<li>${item}</li>`).join('');
+            buahList.innerHTML = rekomendasi.buah.map(item => `<li>${item}</li>`).join('');
+            sayurList.innerHTML = rekomendasi.sayur.map(item => `<li>${item}</li>`).join('');
+            tipsContainer.textContent = rekomendasi.tips;
+        });
+    </script>
+</body>
+</html>
